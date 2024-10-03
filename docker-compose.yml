@@ -1,0 +1,25 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ecommerce
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./ecommerce-backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  frontend:
+    build: ./ecommerce-frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+
