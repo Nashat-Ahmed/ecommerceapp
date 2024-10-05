@@ -1,7 +1,8 @@
 pipeline {
     agent any
     environment {
-        DOCKER_CREDENTIALS_ID = 'docker-hub-repo' 
+        DOCKER_CREDENTIALS_ID = 'docker-hub-repo'
+        KUBECONFIG = credentials('kubeconfig-id') 
     }
     stages {
         stage('Build and Push Docker Images') {
@@ -28,13 +29,15 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                // Apply Kubernetes manifests
-                sh 'kubectl apply -f k8s/db-deployment.yml'
-                sh 'kubectl apply -f k8s/db-service.yml'
-                sh 'kubectl apply -f k8s/backend-deployment.yml'
-                sh 'kubectl apply -f k8s/backend-service.yml'
-                sh 'kubectl apply -f k8s/frontend-deployment.yml'
-                sh 'kubectl apply -f k8s/frontend-service.yml'
+                script {
+                    // Apply Kubernetes manifests
+                    sh 'kubectl apply -f k8s/db-deployment.yml'
+                    sh 'kubectl apply -f k8s/db-service.yml'
+                    sh 'kubectl apply -f k8s/backend-deployment.yml'
+                    sh 'kubectl apply -f k8s/backend-service.yml'
+                    sh 'kubectl apply -f k8s/frontend-deployment.yml'
+                    sh 'kubectl apply -f k8s/frontend-service.yml'
+                }
             }
         }
     }
